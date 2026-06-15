@@ -194,6 +194,7 @@
   .badge-fr { background: rgba(139,111,232,0.12); color: var(--purple); border: 0.5px solid rgba(139,111,232,0.25); }
   .badge-mr { background: rgba(46,204,113,0.12); color: var(--green); border: 0.5px solid rgba(46,204,113,0.25); }
   .badge-ff { background: rgba(240,240,240,0.06); color: var(--text2); border: 0.5px solid var(--border); }
+  .badge-rr { background: rgba(231,76,60,0.12); color: #e74c3c; border: 0.5px solid rgba(231,76,60,0.25); }
 
   /* STATS */
   .car-stats { padding: 0.75rem 1rem; }
@@ -743,7 +744,7 @@ const CARS = [
   { id:'t04', maker:'トヨタ', name:'CELICA XX 2800GT (MA61)', drive:'FR', isNew:false },
   { id:'t05', maker:'トヨタ', name:'CELSIOR (UCF10)', drive:'FR', isNew:false },
   { id:'t06', maker:'トヨタ', name:'CHASER Tourer V (JZX100)', drive:'FR', isNew:false },
-  { id:'t07', maker:'トヨタ', name:'COROLLA SEDAN G (NZE121)', drive:'FF', isNew:false },
+  { id:'t07', maker:'トヨタ', name:'COROLLA SEDAN G (NZE121)', drive:'4WD', isNew:false },
   { id:'t08', maker:'トヨタ', name:'CROWN ATHLETE (GRS204)', drive:'FR', isNew:false },
   { id:'t09', maker:'トヨタ', name:'GR Supra RZ (DB42)', drive:'FR', isNew:false },
   { id:'t10', maker:'トヨタ', name:'HIACE VAN (H200)', drive:'FR', isNew:false },
@@ -766,7 +767,7 @@ const CARS = [
   { id:'m01', maker:'マツダ', name:'Cosmo SPORTS (L10B)', drive:'FR', isNew:false },
   { id:'m02', maker:'マツダ', name:'EUNOS Cosmo TYPE-S (JCESE)', drive:'FR', isNew:false },
   { id:'m03', maker:'マツダ', name:'EUNOS ROADSTER (NA6CE)', drive:'FR', isNew:false },
-  { id:'m04', maker:'マツダ', name:'MAZDASPEED Atenza (GG3P)', drive:'FR', isNew:false },
+  { id:'m04', maker:'マツダ', name:'MAZDASPEED Atenza (GG3P)', drive:'4WD', isNew:false },
   { id:'m05', maker:'マツダ', name:'ROADSTER RF RS (NDERC)', drive:'FR', isNew:false },
   { id:'m06', maker:'マツダ', name:'ROADSTER S Special Package (ND5RC)', drive:'FR', isNew:false },
   { id:'m07', maker:'マツダ', name:'Roadster RS RHT (NCEC)', drive:'FR', isNew:false },
@@ -800,8 +801,8 @@ const CARS = [
   { id:'s11', maker:'スバル', name:'WRX STI (GVB)', drive:'4WD', isNew:false },
   // Porsche (9台)
   { id:'p01', maker:'PORSCHE', name:'718 Cayman S', drive:'MR', isNew:false },
-  { id:'p02', maker:'PORSCHE', name:'911 Turbo S (930)', drive:'FR', isNew:false },
-  { id:'p03', maker:'PORSCHE', name:'911 Turbo 3.6 (964)', drive:'4WD', isNew:false },
+  { id:'p02', maker:'PORSCHE', name:'911 Turbo S (930)', drive:'RR', isNew:false },
+  { id:'p03', maker:'PORSCHE', name:'911 Turbo 3.6 (964)', drive:'RR', isNew:false },
   { id:'p04', maker:'PORSCHE', name:'911 Turbo S (991)', drive:'4WD', isNew:false },
   { id:'p05', maker:'PORSCHE', name:'928GT', drive:'FR', isNew:false },
   // BMW (7台)
@@ -832,7 +833,7 @@ const CARS = [
   { id:'d02', maker:'DODGE', name:'Viper (SRT-10)', drive:'FR', isNew:false },
   // Lamborghini (5台)
   { id:'l01', maker:'LAMBORGHINI', name:'Miura P400S', drive:'MR', isNew:false },
-  { id:'l02', maker:'LAMBORGHINI', name:'Countach LP400', drive:'FR', isNew:false },
+  { id:'l02', maker:'LAMBORGHINI', name:'Countach LP400', drive:'MR', isNew:false },
   { id:'l03', maker:'LAMBORGHINI', name:'Diablo VT', drive:'4WD', isNew:false },
   { id:'l04', maker:'LAMBORGHINI', name:'AVENTADOR LP700-4', drive:'4WD', isNew:false },
 ];
@@ -1023,21 +1024,53 @@ async function handleImgUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
   const carId = event.target.dataset.carid;
+
+  // サイズ確認
+  if (file.size > 5 * 1024 * 1024) {
+    alert('ファイルサイズが大きすぎます（5MB以下にしてください）');
+    event.target.value = '';
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = async (e) => {
     const img = new Image();
     img.onload = async () => {
       const canvas = document.createElement('canvas');
-      const MAX = 800;
+      const MAX = 600; // 800→600に縮小
       const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
       canvas.width = Math.round(img.width * ratio);
       canvas.height = Math.round(img.height * ratio);
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      const compressed = canvas.toDataURL('image/jpeg', 0.8);
+      const compressed = canvas.toDataURL('image/jpeg', 0.7); // 0.8→0.7に圧縮
+
+      // サイズチェック（Base64で1MB以下推奨）
+      if (compressed.length > 1.5 * 1024 * 1024) {
+        alert('画像を圧縮しても大きすぎます。より小さい画像を使用してください');
+        return;
+      }
+
       carImages[carId] = compressed;
-      try { await sbUpsert('images', [{ car_id: carId, data: compressed }]); }
-      catch(err) { alert('画像の保存に失敗しました'); return; }
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/images`, {
+          method: 'POST',
+          headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+          body: JSON.stringify([{ car_id: carId, data: compressed }]),
+          mode: 'cors', credentials: 'omit'
+        });
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error('画像保存エラー:', errText);
+          alert('画像の保存に失敗しました: ' + errText);
+          return;
+        }
+      } catch(err) {
+        console.error('画像保存例外:', err);
+        alert('画像の保存に失敗しました: ' + err.message);
+        return;
+      }
       renderModalImg(carId);
+      alert('画像を保存しました！');
     };
     img.src = e.target.result;
   };
