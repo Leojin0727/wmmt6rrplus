@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WANGAN MIDNIGHT MAXIMUM TUNE 6RR+ | 全車種評価データベース by れおじん</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f5a623;
+    --gold-dim: rgba(245,166,35,0.15);
+    --dark: #0a0a0f;
+    --dark2: #111118;
+    --dark3: #1a1a24;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --text2: rgba(240,240,240,0.55);
+    --text3: rgba(240,240,240,0.3);
+    --green: #2ecc71;
+    --blue: #3b9edd;
+    --purple: #8b6fe8;
+  }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--dark2);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: var(--gold);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark svg { width:16px; height:16px; fill: #000; }
+  .logo-text { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; color: var(--text); }
+  .logo-sub { font-size: 10px; color: var(--text2); letter-spacing: 0.1em; display: block; margin-top: -2px; }
+  .yt-link {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none;
+    border: 0.5px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 999px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .yt-link:hover { color: #f00; border-color: rgba(255,0,0,0.4); }
+  .yt-icon { width: 14px; height: 14px; fill: currentColor; }
+
+  /* HERO */
+  .hero {
+    background: var(--dark2);
+    border-bottom: 0.5px solid var(--border);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(245,166,35,0.025) 0,rgba(245,166,35,0.025) 1px, transparent 1px, transparent 80px),
+                repeating-linear-gradient(0deg, rgba(245,166,35,0.025) 0,rgba(245,166,35,0.025) 1px, transparent 1px, transparent 80px);
+    pointer-events: none;
+  }
+  .hero-eye { font-size: 10px; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.6rem; }
+  .hero-title { font-size: clamp(22px, 5vw, 36px); font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.4rem; }
+  .hero-title span { color: var(--gold); }
+  .hero-desc { font-size: 13px; color: var(--text2); max-width: 480px; margin: 0 auto 1.2rem; }
+  .hero-pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .pill {
+    font-size: 11px; padding: 3px 12px; border-radius: 999px;
+    border: 0.5px solid rgba(245,166,35,0.3); color: var(--gold);
+    background: rgba(245,166,35,0.06);
+  }
+
+  /* MAIN */
+  .main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem;
+    padding-bottom: 1rem; border-bottom: 0.5px solid var(--border);
+    align-items: center;
+  }
+  .filter-label { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-right: 4px; }
+  .filter-btn {
+    font-size: 12px; padding: 5px 14px; border-radius: 999px;
+    border: 0.5px solid var(--border); background: transparent; color: var(--text2);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: rgba(245,166,35,0.4); color: var(--gold); }
+  .filter-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+  /* SORT */
+  .sort-bar {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem;
+  }
+  .sort-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .sort-btn {
+    font-size: 11px; padding: 4px 10px; border-radius: 4px;
+    border: 0.5px solid var(--border); background: transparent; color: var(--text2);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sort-btn:hover, .sort-btn.active { border-color: var(--blue); color: var(--blue); background: rgba(59,158,221,0.1); }
+  .count-badge { margin-left: auto; font-size: 11px; color: var(--text3); }
+
+  /* MAKER SECTION */
+  .maker-section { margin-bottom: 2.5rem; }
+  .maker-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1rem; padding-bottom: 0.6rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .maker-name { font-size: 15px; font-weight: 600; letter-spacing: 0.06em; color: var(--text); }
+  .maker-count { font-size: 11px; color: var(--text3); background: var(--dark3); padding: 2px 8px; border-radius: 4px; }
+
+  /* CAR CARDS GRID */
+  .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+  /* CAR CARD */
+  .car-card {
+    background: var(--dark2);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .car-card:hover { border-color: rgba(245,166,35,0.25); transform: translateY(-1px); }
+  .car-card-head {
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .car-maker-tag { font-size: 10px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-bottom: 3px; }
+  .car-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .car-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .car-badge {
+    font-size: 10px; padding: 2px 7px; border-radius: 3px;
+  }
+  .badge-new { background: rgba(245,166,35,0.15); color: var(--gold); border: 0.5px solid rgba(245,166,35,0.3); }
+  .badge-4wd { background: rgba(59,158,221,0.12); color: var(--blue); border: 0.5px solid rgba(59,158,221,0.25); }
+  .badge-fr { background: rgba(139,111,232,0.12); color: var(--purple); border: 0.5px solid rgba(139,111,232,0.25); }
+  .badge-mr { background: rgba(46,204,113,0.12); color: var(--green); border: 0.5px solid rgba(46,204,113,0.25); }
+  .badge-ff { background: rgba(240,240,240,0.06); color: var(--text2); border: 0.5px solid var(--border); }
+
+  /* STATS */
+  .car-stats { padding: 0.75rem 1rem; }
+  .stat-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .stat-row:last-child { margin-bottom: 0; }
+  .stat-label { font-size: 11px; color: var(--text2); width: 90px; flex-shrink: 0; }
+  .stat-bar-wrap { flex: 1; background: var(--dark3); border-radius: 3px; height: 5px; overflow: hidden; }
+  .stat-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .bar-boost { background: var(--gold); }
+  .bar-contact { background: var(--blue); }
+  .bar-topspeed { background: #e74c3c; }
+  .bar-accel { background: var(--green); }
+  .bar-squeeze { background: var(--purple); }
+  .bar-cornering { background: #e67e22; }
+  .stat-val { font-size: 11px; color: var(--text2); width: 28px; text-align: right; flex-shrink: 0; }
+  .stat-votes { font-size: 10px; color: var(--text3); text-align: right; }
+
+  /* VOTE AREA */
+  .car-vote {
+    padding: 0.75rem 1rem;
+    border-top: 0.5px solid var(--border);
+    background: var(--dark3);
+  }
+  .vote-title { font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+  .vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .vote-grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .vote-item label { font-size: 10px; color: var(--text3); display: block; margin-bottom: 3px; }
+  .vote-stars { display: flex; gap: 2px; }
+  .star {
+    width: 18px; height: 18px; cursor: pointer;
+    fill: var(--dark3); stroke: var(--border);
+    stroke-width: 1.5; transition: fill 0.1s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .star:hover, .star.hovered { fill: var(--gold); stroke: var(--gold); transform: scale(1.1); }
+  .star.selected { fill: var(--gold); stroke: var(--gold); }
+  .vote-submit {
+    width: 100%; padding: 6px; font-size: 12px; font-weight: 600;
+    background: var(--gold); color: #000; border: none; border-radius: 5px;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .vote-submit:hover { opacity: 0.85; }
+  .vote-submit:disabled { opacity: 0.4; cursor: default; }
+  .vote-done { font-size: 11px; color: var(--green); text-align: center; padding: 4px 0; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--dark2);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 560px;
+    max-height: 92vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.2);
+    margin: 12px auto 0;
+  }
+  .modal-header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  }
+  .modal-maker { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+  .modal-carname { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--dark3); border: 0.5px solid var(--border);
+    color: var(--text2); font-size: 18px; line-height: 32px; text-align: center;
+    cursor: pointer; flex-shrink: 0; transition: background 0.15s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.1); }
+  .modal-body { padding: 1.25rem; }
+  .modal-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  /* CAR IMAGE */
+  .modal-car-img-wrap {
+    width: 100%;
+    border-radius: 10px;
+    background: var(--dark3);
+    margin-bottom: 1.25rem;
+    border: 0.5px solid var(--border);
+    position: relative;
+  }
+  .modal-car-img {
+    width: 100%; max-height: 220px;
+    object-fit: contain;
+    display: block;
+    border-radius: 10px;
+  }
+  .modal-car-img-placeholder {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 2rem 0;
+  }
+  .modal-car-img-placeholder svg { width: 40px; height: 40px; fill: rgba(255,255,255,0.1); }
+  .modal-car-img-placeholder span { font-size: 11px; color: var(--text3); }
+
+  /* IMAGE UPLOAD */
+  .img-admin-btns {
+    display: flex; gap: 6px; margin-top: 8px;
+  }
+  .img-upload-btn {
+    flex: 1; font-size: 12px; padding: 7px 10px; border-radius: 6px;
+    background: var(--dark3); color: var(--gold);
+    border: 0.5px solid rgba(245,166,35,0.4);
+    cursor: pointer; text-align: center;
+    transition: background 0.15s;
+  }
+  .img-upload-btn:hover { background: var(--gold-dim); }
+  .img-delete-btn {
+    font-size: 12px; padding: 7px 12px; border-radius: 6px;
+    background: var(--dark3); color: #e74c3c;
+    border: 0.5px solid rgba(231,76,60,0.4);
+    cursor: pointer;
+  }
+  .img-delete-btn:hover { background: rgba(231,76,60,0.1); }
+  #img-file-input { display: none; }
+
+  /* RADAR CHART */
+  .radar-wrap {
+    display: flex; justify-content: center; margin-bottom: 1.25rem;
+  }
+  .radar-svg { width: 220px; height: 220px; overflow: visible; }
+
+  /* MODAL STATS */
+  .modal-stats { margin-bottom: 1.25rem; }
+  .modal-stat-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .modal-stat-label { font-size: 12px; color: var(--text2); width: 80px; flex-shrink: 0; }
+  .modal-stat-bar-wrap { flex: 1; background: var(--dark3); border-radius: 4px; height: 7px; overflow: hidden; }
+  .modal-stat-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .modal-stat-val { font-size: 13px; font-weight: 600; color: var(--text); width: 32px; text-align: right; flex-shrink: 0; }
+  .modal-votes-total { font-size: 11px; color: var(--text3); text-align: center; margin-bottom: 1.25rem; }
+
+  /* MODAL VOTE */
+  .modal-vote-section {
+    background: var(--dark3);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .modal-vote-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 1rem; }
+  .modal-vote-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .modal-vote-item5 { grid-column: span 1; }
+  .modal-vote-item-full { grid-column: span 1; }
+  .modal-vote-item label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 5px; }
+  .modal-stars { display: flex; gap: 4px; }
+  .modal-star {
+    width: 24px; height: 24px; cursor: pointer;
+    fill: var(--dark); stroke: rgba(255,255,255,0.2);
+    stroke-width: 1.5; transition: fill 0.1s, transform 0.1s;
+  }
+  .modal-star:hover, .modal-star.hovered { fill: var(--gold); stroke: var(--gold); transform: scale(1.15); }
+  .modal-star.selected { fill: var(--gold); stroke: var(--gold); }
+  .modal-vote-submit {
+    width: 100%; padding: 10px; font-size: 14px; font-weight: 700;
+    background: var(--gold); color: #000; border: none; border-radius: 8px;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .modal-vote-submit:hover { opacity: 0.85; }
+  .modal-vote-submit:disabled { opacity: 0.35; cursor: default; }
+  .modal-voted-msg { text-align: center; padding: 0.75rem 0; }
+  .modal-voted-msg span { font-size: 14px; color: var(--green); font-weight: 600; }
+  .modal-voted-msg small { display: block; font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  /* CARD CLICKABLE */
+  .car-card-head { cursor: pointer; }
+  .car-card-head:active { background: rgba(255,255,255,0.03); }
+  .card-tap-hint { font-size: 10px; color: var(--text3); margin-top: 6px; }
+
+  /* LOADING */
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 999;
+    transition: opacity 0.4s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loading-spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 12px; color: var(--text2); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 3rem; color: var(--text3); font-size: 13px; }
+
+  /* ADMIN HEADER BTN */
+  .admin-header-btn {
+    font-size: 11px; padding: 5px 12px; border-radius: 999px;
+    border: 0.5px solid var(--border); background: transparent; color: var(--text3);
+    cursor: pointer; transition: all 0.15s; margin-left: 8px;
+  }
+  .admin-header-btn:hover { color: var(--gold); border-color: rgba(245,166,35,0.4); }
+  .admin-header-btn.active { color: #000; background: var(--gold); border-color: var(--gold); }
+
+  /* PASSWORD DIALOG */
+  .pw-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .pw-overlay.open { opacity: 1; pointer-events: all; }
+  .pw-dialog {
+    background: var(--dark2);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 1.5rem;
+    width: 90%; max-width: 320px;
+  }
+  .pw-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 1rem; text-align: center; }
+  .pw-input {
+    width: 100%; padding: 10px 12px; font-size: 14px;
+    background: var(--dark3); border: 0.5px solid var(--border);
+    border-radius: 8px; color: var(--text); outline: none; margin-bottom: 6px;
+    transition: border-color 0.15s;
+  }
+  .pw-input:focus { border-color: var(--gold); }
+  .pw-error { font-size: 11px; color: #e74c3c; min-height: 16px; margin-bottom: 10px; text-align: center; }
+  .pw-btns { display: flex; gap: 8px; }
+  .pw-cancel {
+    flex: 1; padding: 8px; font-size: 13px;
+    background: transparent; border: 0.5px solid var(--border);
+    border-radius: 8px; color: var(--text2); cursor: pointer;
+  }
+  .pw-submit {
+    flex: 1; padding: 8px; font-size: 13px; font-weight: 600;
+    background: var(--gold); border: none;
+    border-radius: 8px; color: #000; cursor: pointer;
+  }
+
+  /* DESCRIPTION SECTION */
+  .modal-desc-wrap {
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    background: var(--dark3);
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+  }
+  .modal-desc-label {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-desc-text {
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .modal-desc-empty {
+    font-size: 12px; color: var(--text3); font-style: italic;
+  }
+  .desc-edit-btn {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    border: 0.5px solid rgba(245,166,35,0.4); color: var(--gold);
+    background: transparent; cursor: pointer; transition: background 0.15s;
+  }
+  .desc-edit-btn:hover { background: var(--gold-dim); }
+  .desc-editor {
+    width: 100%; min-height: 90px; padding: 8px 10px;
+    background: var(--dark); border: 0.5px solid var(--gold);
+    border-radius: 8px; color: var(--text); font-size: 13px;
+    line-height: 1.7; resize: vertical; outline: none;
+    font-family: inherit; margin-top: 6px;
+  }
+  .desc-editor-btns { display: flex; gap: 6px; margin-top: 8px; }
+  .desc-save-btn {
+    flex: 1; padding: 7px; font-size: 12px; font-weight: 600;
+    background: var(--gold); color: #000; border: none;
+    border-radius: 6px; cursor: pointer;
+  }
+  .desc-delete-btn {
+    padding: 7px 12px; font-size: 12px;
+    background: rgba(231,76,60,0.15); color: #e74c3c;
+    border: 0.5px solid rgba(231,76,60,0.3); border-radius: 6px; cursor: pointer;
+  }
+  .desc-cancel-btn {
+    padding: 7px 12px; font-size: 12px;
+    background: transparent; color: var(--text2);
+    border: 0.5px solid var(--border); border-radius: 6px; cursor: pointer;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  footer a { color: var(--text3); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 1.75rem 1rem; }
+    .main { padding: 1.25rem 1rem 3rem; }
+    .car-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="pw-overlay" id="pw-overlay" onclick="handlePwOverlay(event)">
+  <div class="pw-dialog" id="pw-dialog">
+    <p class="pw-title" id="pw-title">🔐 管理者ログイン</p>
+    <input class="pw-input" id="pw-input" type="password" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')submitPw()">
+    <p class="pw-error" id="pw-error"></p>
+    <div class="pw-btns">
+      <button class="pw-cancel" onclick="closePwDialog()">キャンセル</button>
+      <button class="pw-submit" onclick="submitPw()">ログイン</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="img-file-input" accept="image/*" onchange="handleImgUpload(event)">
+
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <p class="modal-maker" id="modal-maker"></p>
+        <p class="modal-carname" id="modal-carname"></p>
+      </div>
+      <div class="modal-close" onclick="closeModal()">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-badges" id="modal-badges"></div>
+      <div class="modal-car-img-wrap" id="modal-car-img-wrap"></div>
+      <div class="radar-wrap">
+        <svg class="radar-svg" id="radar-svg" viewBox="0 0 220 220"></svg>
+      </div>
+      <div class="modal-stats" id="modal-stats"></div>
+      <p class="modal-votes-total" id="modal-votes-total"></p>
+      <div class="modal-desc-section" id="modal-desc-section"></div>
+      <div class="modal-vote-section" id="modal-vote-section"></div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <p class="loading-text">データを読み込み中...</p>
+</div>
+
+<header>
+  <div class="logo">
+    <div>
+      <span class="logo-text">湾岸マキシ 6RR+</span>
+      <span class="logo-sub">車種評価データベース</span>
+    </div>
+  </div>
+  <a class="yt-link" href="https://www.youtube.com/@LeoLeojin" target="_blank">
+    <svg class="yt-icon" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.8 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+    れおじんのYouTubeチャンネルはこちら
+  </a>
+  <button class="admin-header-btn" id="admin-header-btn" onclick="toggleAdminLogin()">管理者</button>
+</header>
+
+<div class="hero">
+  <p class="hero-eye">WANGAN MIDNIGHT MAXIMUM TUNE 6RR+</p>
+  <h1 class="hero-title"><span>全車種評価</span>データベース by れおじん</h1>
+  <p class="hero-desc">湾岸プレイヤーの投票で作られるリアルタイム車種評価サイト<br>ここで見ればきっと何かの役に立つ！<br>ご協力の方よろしくお願い致します！</p>
+  <div class="hero-pills">
+    <span class="pill">みんなで作る評価リスト</span>
+    <span class="pill">全114台収録</span>
+    <span class="pill">初心者でも分かる！</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="filter-bar">
+    <span class="filter-label">メーカー</span>
+    <button class="filter-btn active" onclick="filterMaker('all', this)">すべて</button>
+    <button class="filter-btn" onclick="filterMaker('日産', this)">日産</button>
+    <button class="filter-btn" onclick="filterMaker('トヨタ', this)">トヨタ</button>
+    <button class="filter-btn" onclick="filterMaker('三菱', this)">三菱</button>
+    <button class="filter-btn" onclick="filterMaker('マツダ', this)">マツダ</button>
+    <button class="filter-btn" onclick="filterMaker('スバル', this)">スバル</button>
+    <button class="filter-btn" onclick="filterMaker('ホンダ', this)">ホンダ</button>
+    <button class="filter-btn" onclick="filterMaker('DODGE', this)">DODGE</button>
+    <button class="filter-btn" onclick="filterMaker('CHEVROLET', this)">CHEVROLET</button>
+    <button class="filter-btn" onclick="filterMaker('BMW', this)">BMW</button>
+    <button class="filter-btn" onclick="filterMaker('Audi', this)">Audi</button>
+    <button class="filter-btn" onclick="filterMaker('Mercedes-Benz', this)">Mercedes-Benz</button>
+    <button class="filter-btn" onclick="filterMaker('LAMBORGHINI', this)">LAMBORGHINI</button>
+    <button class="filter-btn" onclick="filterMaker('PORSCHE', this)">PORSCHE</button>
+  </div>
+
+  <div class="sort-bar">
+    <span class="sort-label">並び替え</span>
+    <button class="sort-btn active" onclick="sortCards('default', this)">デフォルト</button>
+    <button class="sort-btn" onclick="sortCards('boost', this)">ブースト↑</button>
+    <button class="sort-btn" onclick="sortCards('topspeed', this)">最高速↑</button>
+    <button class="sort-btn" onclick="sortCards('accel', this)">加速↑</button>
+    <button class="sort-btn" onclick="sortCards('squeeze', this)">擦り抜け↑</button>
+    <button class="sort-btn" onclick="sortCards('cornering', this)">コーナリング↑</button>
+    <button class="sort-btn" onclick="sortCards('contact', this)">接触性能↑</button>
+    <button class="sort-btn" onclick="sortCards('votes', this)">投票数↑</button>
+    <span class="count-badge" id="count-badge">— 台</span>
+  </div>
+
+  <div id="car-list"></div>
+</div>
+
+<footer>
+  <p>情報源: <a href="https://wanganmaxi-official.com/wanganmaxi6rrplus/jp/system/car/" target="_blank">公式サイト 登場車種</a> &nbsp;|&nbsp; 評価はプレイヤーの投票による平均値です &nbsp;|&nbsp; <a href="https://www.youtube.com/@LeoLeojin" target="_blank">YouTubeチャンネル「れおじん」</a></p>
+</footer>
+
+<script>
+const STATS = ['boost','contact','topspeed','accel','squeeze','cornering'];
+const STAT_LABELS = { boost:'ブースト', contact:'接触性能', topspeed:'最高速', accel:'加速', squeeze:'擦り抜け', cornering:'コーナリング' };
+const STAT_CLASSES = { boost:'bar-boost', contact:'bar-contact', topspeed:'bar-topspeed', accel:'bar-accel', squeeze:'bar-squeeze', cornering:'bar-cornering' };
+
+const CARS = [
+  // NISSAN (20台)
+  { id:'n01', maker:'日産', name:'180SX TYPE III (RPS13)', drive:'FR', isNew:false },
+  { id:'n02', maker:'日産', name:'Fairlady Z (S30)', drive:'FR', isNew:false },
+  { id:'n03', maker:'日産', name:'Fairlady Z 280Z-T (S130)', drive:'FR', isNew:false },
+  { id:'n04', maker:'日産', name:'FAIRLADY Z 300ZX (Z31)', drive:'FR', isNew:false },
+  { id:'n05', maker:'日産', name:'Fairlady Z 300ZX TWIN TURBO (Z32)', drive:'FR', isNew:false },
+  { id:'n06', maker:'日産', name:'FAIRLADY Z Version S (Z33)', drive:'FR', isNew:false },
+  { id:'n07', maker:'日産', name:'FAIRLADY Z Version ST (Z34)', drive:'FR', isNew:false },
+  { id:'n08', maker:'日産', name:'FAIRLADY Z NISMO (Z34)', drive:'FR', isNew:false },
+  { id:'n09', maker:'日産', name:'FAIRLADY Z Version ST (RZ34)', drive:'FR', isNew:false },
+  { id:'n10', maker:'日産', name:'FUGA 370GT Type S (KY51)', drive:'FR', isNew:false },
+  { id:'n11', maker:'日産', name:'Gloria GranTurismo ULTIMA (Y33)', drive:'FR', isNew:false },
+  { id:'n12', maker:'日産', name:'GT-R (R35)', drive:'4WD', isNew:false },
+  { id:'n13', maker:'日産', name:'GT-R NISMO (R35)', drive:'4WD', isNew:false },
+  { id:'n14', maker:'日産', name:'GT-R50 by Italdesign (R35)', drive:'4WD', isNew:false },
+  { id:'n15', maker:'日産', name:'LAUREL 25 CLUB-S (GC35)', drive:'FR', isNew:false },
+  { id:'n16', maker:'日産', name:'LEOPARD 3.0 Ultima (F31)', drive:'FR', isNew:false },
+  { id:'n17', maker:'日産', name:'SILVIA K\'s (PS13)', drive:'FR', isNew:false },
+  { id:'n18', maker:'日産', name:'SILVIA K\'s AERO (S14)', drive:'FR', isNew:false },
+  { id:'n19', maker:'日産', name:'Silvia spec.R (S15)', drive:'FR', isNew:false },
+  { id:'n20', maker:'日産', name:'SKYLINE GT-R (KPGC10)', drive:'FR', isNew:false },
+  { id:'n21', maker:'日産', name:'SKYLINE 2000GT-R (KPGC110)', drive:'FR', isNew:false },
+  { id:'n22', maker:'日産', name:'SKYLINE Hardtop 2000 TURBO INTERCOOLER RS X (R30)', drive:'FR', isNew:false },
+  { id:'n23', maker:'日産', name:'SKYLINE GT-R (BNR32)', drive:'4WD', isNew:false },
+  { id:'n24', maker:'日産', name:'SKYLINE GT-R V-spec (BCNR33)', drive:'4WD', isNew:false },
+  { id:'n25', maker:'日産', name:'SKYLINE GT-R V-specII (BNR34)', drive:'4WD', isNew:false },
+  { id:'n26', maker:'日産', name:'SKYLINE COUPE 370GT Type S (CKV36)', drive:'FR', isNew:false },
+  { id:'n27', maker:'日産', name:'STAGEA Autech Version 260RS (WGNC34)', drive:'4WD', isNew:false },
+  // TOYOTA (10台)
+  { id:'t01', maker:'トヨタ', name:'86 (ZN6)', drive:'FR', isNew:false },
+  { id:'t02', maker:'トヨタ', name:'2000GT (MF10)', drive:'FR', isNew:false },
+  { id:'t03', maker:'トヨタ', name:'ARISTO V300 "VERTEX EDITION" (JZS161)', drive:'FR', isNew:false },
+  { id:'t04', maker:'トヨタ', name:'CELICA XX 2800GT (MA61)', drive:'FR', isNew:false },
+  { id:'t05', maker:'トヨタ', name:'CELSIOR (UCF10)', drive:'FR', isNew:false },
+  { id:'t06', maker:'トヨタ', name:'CHASER Tourer V (JZX100)', drive:'FR', isNew:false },
+  { id:'t07', maker:'トヨタ', name:'COROLLA SEDAN G (NZE121)', drive:'FF', isNew:false },
+  { id:'t08', maker:'トヨタ', name:'CROWN ATHLETE (GRS204)', drive:'FR', isNew:false },
+  { id:'t09', maker:'トヨタ', name:'GR Supra RZ (DB42)', drive:'FR', isNew:false },
+  { id:'t10', maker:'トヨタ', name:'HIACE VAN (H200)', drive:'FR', isNew:false },
+  { id:'t11', maker:'トヨタ', name:'HIACE VAN ハイリフト仕様 (H200)', drive:'FR', isNew:false },
+  { id:'t12', maker:'トヨタ', name:'HIACE WAGON (KZH100G)', drive:'FR', isNew:false },
+  { id:'t13', maker:'トヨタ', name:'HIACE WAGON ハイリフト仕様 (KZH100G)', drive:'FR', isNew:false },
+  { id:'t14', maker:'トヨタ', name:'MARK II TOURER V (JZX100)', drive:'FR', isNew:false },
+  { id:'t15', maker:'トヨタ', name:'MR2 GT-S (SW20)', drive:'MR', isNew:false },
+  { id:'t16', maker:'トヨタ', name:'SOARER 2.5GT-TWINTURBO (JZZ30)', drive:'FR', isNew:false },
+  { id:'t17', maker:'トヨタ', name:'SPRINTER TRUENO GT-APEX (AE86)', drive:'FR', isNew:false },
+  { id:'t18', maker:'トヨタ', name:'SUPRA 2.5GT TWIN TURBO R (JZA70)', drive:'FR', isNew:false },
+  { id:'t19', maker:'トヨタ', name:'Supra RZ (JZA80)', drive:'FR', isNew:false },
+  // HONDA (6台)
+  { id:'h01', maker:'ホンダ', name:'NSX (NA1)', drive:'MR', isNew:false },
+  { id:'h02', maker:'ホンダ', name:'NSX (NC1)', drive:'4WD', isNew:false },
+  { id:'h03', maker:'ホンダ', name:'NSX-R (NA2)', drive:'MR', isNew:false },
+  { id:'h04', maker:'ホンダ', name:'S660 α (JW5)', drive:'MR', isNew:false },
+  { id:'h05', maker:'ホンダ', name:'S2000 Type S (AP2)', drive:'FR', isNew:false },
+  // MAZDA (8台)
+  { id:'m01', maker:'マツダ', name:'Cosmo SPORTS (L10B)', drive:'FR', isNew:false },
+  { id:'m02', maker:'マツダ', name:'EUNOS Cosmo TYPE-S (JCESE)', drive:'FR', isNew:false },
+  { id:'m03', maker:'マツダ', name:'EUNOS ROADSTER (NA6CE)', drive:'FR', isNew:false },
+  { id:'m04', maker:'マツダ', name:'MAZDASPEED Atenza (GG3P)', drive:'FR', isNew:false },
+  { id:'m05', maker:'マツダ', name:'ROADSTER RF RS (NDERC)', drive:'FR', isNew:false },
+  { id:'m06', maker:'マツダ', name:'ROADSTER S Special Package (ND5RC)', drive:'FR', isNew:false },
+  { id:'m07', maker:'マツダ', name:'Roadster RS RHT (NCEC)', drive:'FR', isNew:false },
+  { id:'m08', maker:'マツダ', name:'RX-7 Type R (FD3S)', drive:'FR', isNew:false },
+  { id:'m09', maker:'マツダ', name:'RX-8 Type S (SE3P)', drive:'FR', isNew:false },
+  { id:'m10', maker:'マツダ', name:'SAVANNA GT (S124A)', drive:'FR', isNew:false },
+  { id:'m11', maker:'マツダ', name:'SAVANNA RX-7 GT-X (FC3S)', drive:'FR', isNew:false },
+  { id:'m12', maker:'マツダ', name:'SAVANNA RX-7 TURBO SE-Limited (SA22C)', drive:'FR', isNew:false },
+  // MITSUBISHI (7台)
+  { id:'mi01', maker:'三菱', name:'GALANT VR-4 (E-E39A)', drive:'4WD', isNew:false },
+  { id:'mi02', maker:'三菱', name:'GTO TWIN TURBO (Z16A)', drive:'4WD', isNew:false },
+  { id:'mi03', maker:'三菱', name:'LANCER Evolution III GSR (CE9A)', drive:'4WD', isNew:false },
+  { id:'mi04', maker:'三菱', name:'LANCER EVOLUTION V GSR (CP9A)', drive:'4WD', isNew:false },
+  { id:'mi05', maker:'三菱', name:'LANCER EVOLUTION VI GSR (CP9A)', drive:'4WD', isNew:false },
+  { id:'mi06', maker:'三菱', name:'LANCER Evolution VIII MR GSR (CT9A)', drive:'4WD', isNew:false },
+  { id:'mi07', maker:'三菱', name:'LANCER Evolution IX MR GSR (CT9A)', drive:'4WD', isNew:false },
+  { id:'mi08', maker:'三菱', name:'LANCER EVOLUTION X GSR (CZ4A)', drive:'4WD', isNew:false },
+  { id:'mi09', maker:'三菱', name:'PAJERO EVOLUTION (V55W)', drive:'4WD', isNew:false },
+  { id:'mi10', maker:'三菱', name:'STARION GSR-VR (A187A)', drive:'FR', isNew:false },
+  // SUBARU (7台)
+  { id:'s01', maker:'スバル', name:'ALCYONE SVX Version L (CXD)', drive:'4WD', isNew:false },
+  { id:'s02', maker:'スバル', name:'BRZ (ZC6)', drive:'FR', isNew:false },
+  { id:'s03', maker:'スバル', name:'Impreza WRX STi Version VI (GC8)', drive:'4WD', isNew:false },
+  { id:'s04', maker:'スバル', name:'Impreza WRX STi (GDB-C)', drive:'4WD', isNew:false },
+  { id:'s05', maker:'スバル', name:'IMPREZA WRX STI (GDB-F)', drive:'4WD', isNew:false },
+  { id:'s06', maker:'スバル', name:'IMPREZA WRX STI (GRB)', drive:'4WD', isNew:false },
+  { id:'s07', maker:'スバル', name:'LEGACY B4 2.0GT spec.B (BL5)', drive:'4WD', isNew:false },
+  { id:'s08', maker:'スバル', name:'LEGACY B4 2.5GT S Package (BM9)', drive:'4WD', isNew:false },
+  { id:'s09', maker:'スバル', name:'LEVORG 2.0GT-S EyeSight (VMG)', drive:'4WD', isNew:false },
+  { id:'s10', maker:'スバル', name:'R2 (RC2)', drive:'4WD', isNew:false },
+  { id:'s11', maker:'スバル', name:'WRX STI (GVB)', drive:'4WD', isNew:false },
+  // Porsche (9台)
+  { id:'p01', maker:'PORSCHE', name:'718 Cayman S', drive:'MR', isNew:false },
+  { id:'p02', maker:'PORSCHE', name:'911 Turbo S (930)', drive:'FR', isNew:false },
+  { id:'p03', maker:'PORSCHE', name:'911 Turbo 3.6 (964)', drive:'4WD', isNew:false },
+  { id:'p04', maker:'PORSCHE', name:'911 Turbo S (991)', drive:'4WD', isNew:false },
+  { id:'p05', maker:'PORSCHE', name:'928GT', drive:'FR', isNew:false },
+  // BMW (7台)
+  { id:'b01', maker:'BMW', name:'2002 turbo (E20)', drive:'FR', isNew:false },
+  { id:'b02', maker:'BMW', name:'M1 (E26)', drive:'MR', isNew:false },
+  { id:'b03', maker:'BMW', name:'M3 CSL (E46)', drive:'FR', isNew:false },
+  { id:'b04', maker:'BMW', name:'M3 COUPE (E92)', drive:'FR', isNew:false },
+  { id:'b05', maker:'BMW', name:'M4 Coupe Competition (G82)', drive:'4WD', isNew:false },
+  { id:'b06', maker:'BMW', name:'M6 Gran Coupe (6C44M)', drive:'FR', isNew:false },
+  { id:'b07', maker:'BMW', name:'MINI COOPER S CROSSOVER (ZC16A)', drive:'4WD', isNew:false },
+  { id:'b08', maker:'BMW', name:'Z4 sDrive35is (E89)', drive:'FR', isNew:false },
+  // Mercedes-Benz (6台)
+  { id:'me01', maker:'Mercedes-Benz', name:'190E 2.5-16 Evolution II (W201)', drive:'FR', isNew:false },
+  { id:'me02', maker:'Mercedes-Benz', name:'500E (W124)', drive:'FR', isNew:false },
+  { id:'me03', maker:'Mercedes-Benz', name:'SLK350 BlueEFFICIENCY (R172)', drive:'FR', isNew:false },
+  { id:'me04', maker:'Mercedes-Benz', name:'SLS AMG GT (C197)', drive:'FR', isNew:false },
+  // Audi (3台)
+  { id:'a01', maker:'Audi', name:'RS4 Avant (B8)', drive:'4WD', isNew:false },
+  { id:'a02', maker:'Audi', name:'R8 Coupe 5.2 FSI quattro (ABA42)', drive:'4WD', isNew:false },
+  // CHEVROLET (5台)
+  { id:'ch01', maker:'CHEVROLET', name:'Camaro Z28', drive:'FR', isNew:false },
+  { id:'ch02', maker:'CHEVROLET', name:'CAMARO SS RS', drive:'FR', isNew:false },
+  { id:'ch03', maker:'CHEVROLET', name:'Corvette STINGRAY (C2)', drive:'FR', isNew:false },
+  { id:'ch04', maker:'CHEVROLET', name:'CORVETTE Stingray (C3)', drive:'FR', isNew:false },
+  { id:'ch05', maker:'CHEVROLET', name:'CORVETTE ZR1 (C6)', drive:'FR', isNew:false },
+  // DODGE (3台)
+  { id:'d01', maker:'DODGE', name:'Charger (SRT8)', drive:'FR', isNew:false },
+  { id:'d02', maker:'DODGE', name:'Viper (SRT-10)', drive:'FR', isNew:false },
+  // Lamborghini (5台)
+  { id:'l01', maker:'LAMBORGHINI', name:'Miura P400S', drive:'MR', isNew:false },
+  { id:'l02', maker:'LAMBORGHINI', name:'Countach LP400', drive:'FR', isNew:false },
+  { id:'l03', maker:'LAMBORGHINI', name:'Diablo VT', drive:'4WD', isNew:false },
+  { id:'l04', maker:'LAMBORGHINI', name:'AVENTADOR LP700-4', drive:'4WD', isNew:false },
+];
+
+// ===== SUPABASE CONFIG =====
+const SUPABASE_URL = 'https://kyvxtwftncceeunzvimx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dnh0d2Z0bmNjZWV1bnp2aW14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NjA3OTEsImV4cCI6MjA5NzAzNjc5MX0.wVlTOCq-0wF_Kk1p6jLwMriA1WjsnWVfeADsQ798koE';
+const SB_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`
+};
+async function sbGet(table, query = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${query}`, { headers: SB_HEADERS });
+  return res.ok ? await res.json() : [];
+}
+async function sbUpsert(table, data) {
+  await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify(data)
+  });
+}
+async function sbDelete(table, query) {
+  await fetch(`${SUPABASE_URL}/rest/v1/${table}${query}`, { method: 'DELETE', headers: SB_HEADERS });
+}
+
+// ===== DATA =====
+const VOTED_KEY = 'wmmt6rr_voted_v2';
+let votedCars = {};
+let ratings = {};
+let carImages = {};
+let descriptions = {};
+let currentFilter = 'all';
+let currentSort = 'default';
+
+async function loadRatings() {
+  try {
+    const rows = await sbGet('ratings');
+    rows.forEach(r => {
+      if (!ratings[r.car_id]) ratings[r.car_id] = initRating();
+      ratings[r.car_id][r.stat] = { sum: r.sum, count: r.count };
+    });
+  } catch(e) { console.warn('loadRatings error:', e); }
+  CARS.forEach(c => { if (!ratings[c.id]) ratings[c.id] = initRating(); });
+  try {
+    const v = localStorage.getItem(VOTED_KEY);
+    votedCars = v ? JSON.parse(v) : {};
+  } catch { votedCars = {}; }
+}
+
+async function loadDescriptions() {
+  try {
+    const rows = await sbGet('descriptions');
+    rows.forEach(r => { descriptions[r.car_id] = r.text; });
+  } catch(e) { console.warn('loadDescriptions error:', e); }
+}
+
+async function loadImages() {
+  try {
+    const rows = await sbGet('images');
+    rows.forEach(r => { carImages[r.car_id] = r.data; });
+  } catch(e) { console.warn('loadImages error:', e); }
+}
+
+function initRating() {
+  const r = {};
+  STATS.forEach(s => { r[s] = { sum: 0, count: 0 }; });
+  return r;
+}
+
+function getAvg(carId, stat) {
+  const r = ratings[carId]?.[stat];
+  if (!r || r.count === 0) return 0;
+  return Math.round((r.sum / r.count) * 10) / 10;
+}
+
+function getTotalVotes(carId) {
+  return Math.max(...STATS.map(s => ratings[carId]?.[s]?.count || 0));
+}
+
+function driveBadge(drive) {
+  return `<span class="car-badge badge-${drive.toLowerCase()}">${drive}</span>`;
+}
+
+function renderStars(carId, stat, val) {
+  let html = `<div class="vote-stars" data-car="${carId}" data-stat="${stat}">`;
+  for (let i=1;i<=5;i++) {
+    html += `<svg class="star${i<=val?' selected':''}" viewBox="0 0 20 20" data-val="${i}"
+      onmouseover="hoverStar(this,${i})" onmouseout="unhoverStar(this)"
+      onclick="clickStar('${carId}','${stat}',${i})">
+      <polygon points="10,1 12.9,7 19.5,7.6 14.5,12 16.2,18.5 10,15 3.8,18.5 5.5,12 0.5,7.6 7.1,7"/>
+    </svg>`;
+  }
+  return html + '</div>';
+}
+
+function hoverStar(el, val) {
+  const wrap = el.closest('.vote-stars');
+  wrap.querySelectorAll('.star').forEach((s,i) => {
+    s.classList.toggle('hovered', i < val);
+  });
+}
+function unhoverStar(el) {
+  const wrap = el.closest('.vote-stars');
+  wrap.querySelectorAll('.star').forEach(s => s.classList.remove('hovered'));
+}
+
+const pendingVotes = {};
+function clickStar(carId, stat, val) {
+  if (!pendingVotes[carId]) pendingVotes[carId] = {};
+  pendingVotes[carId][stat] = val;
+  const wrap = document.querySelector(`.vote-stars[data-car="${carId}"][data-stat="${stat}"]`);
+  if (wrap) {
+    wrap.querySelectorAll('.star').forEach((s,i) => {
+      s.classList.toggle('selected', i < val);
+    });
+  }
+  // check if all 5 stats selected
+  const btn = document.getElementById(`vote-btn-${carId}`);
+  if (btn && Object.keys(pendingVotes[carId]).length === 6) {
+    btn.disabled = false;
+  }
+}
+
+async function submitVote(carId) {
+  if (!pendingVotes[carId] || Object.keys(pendingVotes[carId]).length < 6) return;
+  const btn = document.getElementById(`vote-btn-${carId}`);
+  if (btn) { btn.disabled = true; btn.textContent = '送信中...'; }
+
+  if (!ratings[carId]) ratings[carId] = initRating();
+  const upsertData = STATS.map(s => {
+    const v = pendingVotes[carId][s];
+    ratings[carId][s].sum += v;
+    ratings[carId][s].count += 1;
+    return { car_id: carId, stat: s, sum: ratings[carId][s].sum, count: ratings[carId][s].count };
+  });
+  try { await sbUpsert('ratings', upsertData); } catch(e) { console.warn(e); }
+
+  votedCars[carId] = true;
+  try { localStorage.setItem(VOTED_KEY, JSON.stringify(votedCars)); } catch(e) {}
+  delete pendingVotes[carId];
+
+  const card = document.getElementById(`card-${carId}`);
+  if (card) { const car = CARS.find(c => c.id === carId); card.outerHTML = renderCard(car); }
+}
+
+// ===== IMAGE =====
+function renderModalImg(carId) {
+  const imgWrap = document.getElementById('modal-car-img-wrap');
+  if (!imgWrap) return;
+  const b64 = carImages[carId];
+  const adminBtns = isAdmin ? `
+    <div class="img-admin-btns">
+      <button class="img-upload-btn" onclick="document.getElementById('img-file-input').dataset.carid='${carId}'; document.getElementById('img-file-input').click()">📷 画像を${b64 ? '変更' : '追加'}</button>
+      ${b64 ? `<button class="img-delete-btn" onclick="deleteCarImg('${carId}')">🗑 削除</button>` : ''}
+    </div>` : '';
+  if (b64) {
+    imgWrap.innerHTML = `<img class="modal-car-img" src="${b64}" alt="">${adminBtns}`;
+  } else {
+    imgWrap.innerHTML = `
+      <div class="modal-car-img-placeholder">
+        <svg viewBox="0 0 64 64"><path d="M4 44 L16 20 L28 32 L40 16 L60 44 Z"/><circle cx="18" cy="38" r="5"/><circle cx="46" cy="38" r="5"/></svg>
+        <span>${isAdmin ? '画像をアップロードしてください' : '画像未登録'}</span>
+      </div>
+      ${adminBtns}`;
+  }
+}
+
+async function handleImgUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const carId = event.target.dataset.carid;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.8);
+      carImages[carId] = compressed;
+      try { await sbUpsert('images', [{ car_id: carId, data: compressed }]); }
+      catch(err) { alert('画像の保存に失敗しました'); return; }
+      renderModalImg(carId);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+async function deleteCarImg(carId) {
+  if (!confirm('この車種の画像を削除しますか？')) return;
+  delete carImages[carId];
+  try { await sbDelete('images', `?car_id=eq.${carId}`); } catch(e) {}
+  renderModalImg(carId);
+}
+
+// ===== ADMIN =====
+const ADMIN_PW = 'leojin0727';
+let isAdmin = false;
+
+function toggleAdminLogin() {
+  if (isAdmin) {
+    isAdmin = false;
+    document.getElementById('admin-header-btn').classList.remove('active');
+    document.getElementById('admin-header-btn').textContent = '管理者';
+    if (currentModalCarId) renderModalDesc(currentModalCarId);
+    if (currentModalCarId) renderModalImg(currentModalCarId);
+  } else {
+    openPwDialog();
+  }
+}
+
+function openPwDialog() {
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').textContent = '';
+  document.getElementById('pw-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+function closePwDialog() {
+  document.getElementById('pw-overlay').classList.remove('open');
+}
+function handlePwOverlay(e) {
+  if (e.target === document.getElementById('pw-overlay')) closePwDialog();
+}
+function submitPw() {
+  const val = document.getElementById('pw-input').value.trim();
+  if (val === ADMIN_PW) {
+    isAdmin = true;
+    closePwDialog();
+    document.getElementById('admin-header-btn').classList.add('active');
+    document.getElementById('admin-header-btn').textContent = '管理者モード中';
+    if (currentModalCarId) renderModalDesc(currentModalCarId);
+    if (currentModalCarId) renderModalImg(currentModalCarId);
+  } else {
+    document.getElementById('pw-error').textContent = 'パスワードが違います';
+    document.getElementById('pw-input').select();
+  }
+}
+
+function renderModalDesc(carId) {
+  const section = document.getElementById('modal-desc-section');
+  if (!section) return;
+  const desc = descriptions[carId] || '';
+  const editBtn = isAdmin ? `<button class="desc-edit-btn" onclick="startDescEdit('${carId}')">✏️ 編集</button>` : '';
+
+  if (isAdmin) {
+    // 管理者モード：表示＋編集ボタン
+    section.innerHTML = `<div class="modal-desc-wrap">
+      <div class="modal-desc-label">
+        <span>📝 車種説明</span>
+        ${editBtn}
+      </div>
+      ${desc
+        ? `<p class="modal-desc-text" id="desc-text-${carId}">${escHtml(desc)}</p>`
+        : `<p class="modal-desc-empty" id="desc-text-${carId}">説明文がまだありません。編集ボタンから追加できます。</p>`
+      }
+    </div>`;
+  } else {
+    // 一般ユーザー：説明文があれば表示、なければ非表示
+    if (!desc) { section.innerHTML = ''; return; }
+    section.innerHTML = `<div class="modal-desc-wrap">
+      <div class="modal-desc-label"><span>📝 車種説明</span></div>
+      <p class="modal-desc-text">${escHtml(desc)}</p>
+    </div>`;
+  }
+}
+
+function startDescEdit(carId) {
+  const section = document.getElementById('modal-desc-section');
+  const current = descriptions[carId] || '';
+  section.innerHTML = `<div class="modal-desc-wrap">
+    <div class="modal-desc-label"><span>📝 車種説明を編集</span></div>
+    <textarea class="desc-editor" id="desc-editor" placeholder="この車種の説明を入力してください...">${escHtml(current)}</textarea>
+    <div class="desc-editor-btns">
+      <button class="desc-save-btn" onclick="saveDesc('${carId}')">保存</button>
+      ${current ? `<button class="desc-delete-btn" onclick="deleteDesc('${carId}')">削除</button>` : ''}
+      <button class="desc-cancel-btn" onclick="renderModalDesc('${carId}')">キャンセル</button>
+    </div>
+  </div>`;
+  document.getElementById('desc-editor').focus();
+}
+
+async function saveDesc(carId) {
+  const val = document.getElementById('desc-editor').value.trim();
+  descriptions[carId] = val;
+  try { await sbUpsert('descriptions', [{ car_id: carId, text: val }]); }
+  catch(e) { alert('保存に失敗しました'); return; }
+  renderModalDesc(carId);
+}
+
+async function deleteDesc(carId) {
+  if (!confirm('説明文を削除しますか？')) return;
+  descriptions[carId] = '';
+  try { await sbDelete('descriptions', `?car_id=eq.${carId}`); } catch(e) {}
+  renderModalDesc(carId);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== MODAL =====
+let currentModalCarId = null;
+const modalPending = {};
+
+function openModal(carId) {
+  currentModalCarId = carId;
+  const car = CARS.find(c => c.id === carId);
+  if (!car) return;
+
+  document.getElementById('modal-maker').textContent = car.maker;
+  document.getElementById('modal-carname').textContent = car.name;
+
+  // badges
+  const badges = `${car.isNew ? '<span class="car-badge badge-new">NEW</span>' : ''}${driveBadge(car.drive)}`;
+  document.getElementById('modal-badges').innerHTML = badges;
+
+  // 車種画像（Base64ストレージから取得）
+  const imgWrap = document.getElementById('modal-car-img-wrap');
+  renderModalImg(carId);
+
+  // radar chart
+  drawRadar(carId);
+
+  // stats bars
+  let statsHtml = '';
+  STATS.forEach(s => {
+    const avg = getAvg(carId, s);
+    const pct = (avg / 5 * 100).toFixed(0);
+    statsHtml += `<div class="modal-stat-row">
+      <span class="modal-stat-label">${STAT_LABELS[s]}</span>
+      <div class="modal-stat-bar-wrap"><div class="modal-stat-bar ${STAT_CLASSES[s]}" style="width:${pct}%"></div></div>
+      <span class="modal-stat-val">${avg > 0 ? avg.toFixed(1) : '—'}</span>
+    </div>`;
+  });
+  document.getElementById('modal-stats').innerHTML = statsHtml;
+
+  const totalVotes = getTotalVotes(carId);
+  document.getElementById('modal-votes-total').textContent = totalVotes > 0 ? `${totalVotes}票の平均評価` : 'まだ投票がありません';
+
+  // vote section
+  renderModalVote(carId);
+
+  // description
+  renderModalDesc(carId);
+
+  // open
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderModalVote(carId) {
+  const voted = votedCars[carId];
+  const section = document.getElementById('modal-vote-section');
+  if (voted) {
+    section.innerHTML = `<div class="modal-voted-msg">
+      <span>✓ 投票済み</span>
+      <small>あなたの評価が反映されています</small>
+    </div>`;
+    return;
+  }
+  let grid = '<div class="modal-vote-grid">';
+  STATS.forEach((s, i) => {
+    const isLast = i === 5;
+    grid += `<div class="modal-vote-item5${isLast ? ' modal-vote-item-full' : ''}">
+      <label>${STAT_LABELS[s]}</label>
+      <div class="modal-stars" data-car="${carId}" data-stat="${s}">
+        ${[1,2,3,4,5].map(v => `<svg class="modal-star" viewBox="0 0 20 20" data-val="${v}"
+          onmouseover="mHover(this,${v})" onmouseout="mUnhover(this)"
+          onclick="mClick('${carId}','${s}',${v})">
+          <polygon points="10,1 12.9,7 19.5,7.6 14.5,12 16.2,18.5 10,15 3.8,18.5 5.5,12 0.5,7.6 7.1,7"/>
+        </svg>`).join('')}
+      </div>
+    </div>`;
+  });
+  grid += '</div>';
+  section.innerHTML = `
+    <p class="modal-vote-title">⭐ あなたの評価を投票</p>
+    ${grid}
+    <button class="modal-vote-submit" id="modal-vote-btn" disabled onclick="submitModalVote()">投票する（全6項目必須）</button>`;
+}
+
+function mHover(el, val) {
+  el.closest('.modal-stars').querySelectorAll('.modal-star').forEach((s,i) => s.classList.toggle('hovered', i < val));
+}
+function mUnhover(el) {
+  el.closest('.modal-stars').querySelectorAll('.modal-star').forEach(s => s.classList.remove('hovered'));
+}
+function mClick(carId, stat, val) {
+  if (!modalPending[carId]) modalPending[carId] = {};
+  modalPending[carId][stat] = val;
+  const wrap = document.querySelector(`.modal-stars[data-car="${carId}"][data-stat="${stat}"]`);
+  if (wrap) wrap.querySelectorAll('.modal-star').forEach((s,i) => s.classList.toggle('selected', i < val));
+  const btn = document.getElementById('modal-vote-btn');
+  if (btn && Object.keys(modalPending[carId]).length === 6) btn.disabled = false;
+}
+
+async function submitModalVote() {
+  const carId = currentModalCarId;
+  if (!modalPending[carId] || Object.keys(modalPending[carId]).length < 6) return;
+  const btn = document.getElementById('modal-vote-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '送信中...'; }
+
+  if (!ratings[carId]) ratings[carId] = initRating();
+  const upsertData = STATS.map(s => {
+    const v = modalPending[carId][s];
+    ratings[carId][s].sum += v;
+    ratings[carId][s].count += 1;
+    return { car_id: carId, stat: s, sum: ratings[carId][s].sum, count: ratings[carId][s].count };
+  });
+  try { await sbUpsert('ratings', upsertData); } catch(e) { console.warn(e); }
+  votedCars[carId] = true;
+  try { localStorage.setItem(VOTED_KEY, JSON.stringify(votedCars)); } catch(e) {}
+  delete modalPending[carId];
+
+  // re-render modal
+  drawRadar(carId);
+  let statsHtml = '';
+  STATS.forEach(s => {
+    const avg = getAvg(carId, s);
+    const pct = (avg / 5 * 100).toFixed(0);
+    statsHtml += `<div class="modal-stat-row">
+      <span class="modal-stat-label">${STAT_LABELS[s]}</span>
+      <div class="modal-stat-bar-wrap"><div class="modal-stat-bar ${STAT_CLASSES[s]}" style="width:${pct}%"></div></div>
+      <span class="modal-stat-val">${avg > 0 ? avg.toFixed(1) : '—'}</span>
+    </div>`;
+  });
+  document.getElementById('modal-stats').innerHTML = statsHtml;
+  const totalVotes = getTotalVotes(carId);
+  document.getElementById('modal-votes-total').textContent = `${totalVotes}票の平均評価`;
+  renderModalVote(carId);
+  const card = document.getElementById(`card-${carId}`);
+  if (card) { const car = CARS.find(c => c.id === carId); card.outerHTML = renderCard(car); }
+}
+
+function drawRadar(carId) {
+  const svg = document.getElementById('radar-svg');
+  const cx = 110, cy = 110, r = 80;
+  const n = STATS.length;
+  const angles = STATS.map((_, i) => (Math.PI * 2 * i / n) - Math.PI / 2);
+
+  // grid rings
+  let html = '';
+  const ringColors = ['rgba(255,255,255,0.04)','rgba(255,255,255,0.06)','rgba(255,255,255,0.08)','rgba(255,255,255,0.06)','rgba(255,255,255,0.04)'];
+  for (let ring = 1; ring <= 5; ring++) {
+    const rr = r * ring / 5;
+    const pts = angles.map(a => `${cx + rr * Math.cos(a)},${cy + rr * Math.sin(a)}`).join(' ');
+    html += `<polygon points="${pts}" fill="${ringColors[ring-1]}" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>`;
+  }
+  // axis lines
+  angles.forEach(a => {
+    html += `<line x1="${cx}" y1="${cy}" x2="${cx + r * Math.cos(a)}" y2="${cy + r * Math.sin(a)}" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>`;
+  });
+  // data polygon
+  const vals = STATS.map(s => getAvg(carId, s) || 0);
+  const dataPts = vals.map((v, i) => {
+    const rr = r * (v / 5);
+    return `${cx + rr * Math.cos(angles[i])},${cy + rr * Math.sin(angles[i])}`;
+  }).join(' ');
+  html += `<polygon points="${dataPts}" fill="rgba(245,166,35,0.2)" stroke="#f5a623" stroke-width="2"/>`;
+  // dots
+  vals.forEach((v, i) => {
+    const rr = r * (v / 5);
+    const x = cx + rr * Math.cos(angles[i]);
+    const y = cy + rr * Math.sin(angles[i]);
+    if (v > 0) html += `<circle cx="${x}" cy="${y}" r="4" fill="#f5a623" stroke="#0a0a0f" stroke-width="1.5"/>`;
+  });
+  // labels
+  const LABEL_OFFSET = 18;
+  STATS.forEach((s, i) => {
+    const a = angles[i];
+    const lx = cx + (r + LABEL_OFFSET) * Math.cos(a);
+    const ly = cy + (r + LABEL_OFFSET) * Math.sin(a);
+    const anchor = Math.abs(Math.cos(a)) < 0.1 ? 'middle' : (Math.cos(a) > 0 ? 'start' : 'end');
+    html += `<text x="${lx}" y="${ly + 4}" text-anchor="${anchor}" font-size="10" fill="rgba(240,240,240,0.6)" font-family="sans-serif">${STAT_LABELS[s]}</text>`;
+  });
+  svg.innerHTML = html;
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentModalCarId = null;
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+// swipe down to close
+let touchStartY = 0;
+document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const modal = document.getElementById('modal-overlay');
+  if (!modal.classList.contains('open')) return;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (dy > 80) closeModal();
+}, { passive: true });
+
+// ===== RENDER CARD (with modal trigger) =====
+function renderCard(car) {
+  const voted = votedCars[car.id];
+  const totalVotes = getTotalVotes(car.id);
+
+  let statsHtml = '';
+  STATS.forEach(s => {
+    const avg = getAvg(car.id, s);
+    const pct = (avg / 5 * 100).toFixed(0);
+    statsHtml += `
+      <div class="stat-row">
+        <span class="stat-label">${STAT_LABELS[s]}</span>
+        <div class="stat-bar-wrap"><div class="stat-bar ${STAT_CLASSES[s]}" style="width:${pct}%"></div></div>
+        <span class="stat-val">${avg > 0 ? avg.toFixed(1) : '—'}</span>
+      </div>`;
+  });
+
+  const badges = `${car.isNew ? '<span class="car-badge badge-new">NEW</span>' : ''}${driveBadge(car.drive)}`;
+  const votesLabel = totalVotes > 0 ? `<div class="stat-votes">${totalVotes}票</div>` : '';
+  const voteHint = voted
+    ? `<div class="car-vote"><p class="vote-done">✓ 投票済み — タップして詳細を見る</p></div>`
+    : `<div class="car-vote"><p class="vote-title">👆 タップして詳細・投票する</p></div>`;
+
+  return `<div class="car-card" id="card-${car.id}" data-maker="${car.maker}" data-id="${car.id}" onclick="openModal('${car.id}')" style="cursor:pointer">
+    <div class="car-card-head">
+      <p class="car-maker-tag">${car.maker}</p>
+      <p class="car-name">${car.name}</p>
+      <div class="car-badges">${badges}</div>
+    </div>
+    <div class="car-stats">${statsHtml}${votesLabel}</div>
+    ${voteHint}
+  </div>`;
+}
+
+function getFilteredSortedCars() {
+  let list = currentFilter === 'all' ? [...CARS] : CARS.filter(c => c.maker === currentFilter);
+  if (currentSort === 'default') return list;
+  if (currentSort === 'votes') return list.sort((a,b) => getTotalVotes(b.id) - getTotalVotes(a.id));
+  return list.sort((a,b) => getAvg(b.id, currentSort) - getAvg(a.id, currentSort));
+}
+
+function getMakers(list) {
+  const seen = new Set(); const makers = [];
+  list.forEach(c => { if (!seen.has(c.maker)) { seen.add(c.maker); makers.push(c.maker); } });
+  return makers;
+}
+
+function renderAll() {
+  const list = getFilteredSortedCars();
+  const container = document.getElementById('car-list');
+  document.getElementById('count-badge').textContent = `${list.length} 台`;
+
+  if (currentSort !== 'default' || currentFilter !== 'all') {
+    // flat grid when sorted/filtered
+    container.innerHTML = `<div class="car-grid">${list.map(renderCard).join('')}</div>`;
+  } else {
+    // grouped by maker
+    const makers = getMakers(list);
+    container.innerHTML = makers.map(maker => {
+      const cars = list.filter(c => c.maker === maker);
+      return `<div class="maker-section" data-maker="${maker}">
+        <div class="maker-header">
+          <span class="maker-name">${maker}</span>
+          <span class="maker-count">${cars.length}台</span>
+        </div>
+        <div class="car-grid">${cars.map(renderCard).join('')}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function filterMaker(maker, btn) {
+  currentFilter = maker;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+function sortCards(stat, btn) {
+  currentSort = stat;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+// Init
+(async () => {
+  await Promise.all([loadRatings(), loadDescriptions()]);
+  loadImages(); // 画像は非同期で後から読み込み（起動を遅らせない）
+  renderAll();
+  const overlay = document.getElementById('loading');
+  overlay.classList.add('hidden');
+  setTimeout(() => overlay.style.display = 'none', 400);
+})();
+</script>
+</body>
+</html>
