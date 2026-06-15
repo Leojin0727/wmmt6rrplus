@@ -32,11 +32,12 @@
   header {
     background: var(--dark2);
     border-bottom: 0.5px solid var(--border);
-    padding: 0 1.5rem;
+    padding: 0 0.75rem;
+    gap: 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 56px;
+    height: 52px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -44,7 +45,9 @@
   .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
+    min-width: 0;
+    flex-shrink: 1;
   }
   .logo-mark {
     width: 28px; height: 28px;
@@ -53,14 +56,15 @@
     display: flex; align-items: center; justify-content: center;
   }
   .logo-mark svg { width:16px; height:16px; fill: #000; }
-  .logo-text { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; color: var(--text); }
-  .logo-sub { font-size: 10px; color: var(--text2); letter-spacing: 0.1em; display: block; margin-top: -2px; }
+  .logo-text { font-size: 11px; font-weight: 600; letter-spacing: 0.03em; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .logo-sub { font-size: 9px; color: var(--text2); letter-spacing: 0.08em; display: block; margin-top: -2px; white-space: nowrap; }
   .yt-link {
     display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--text2);
+    font-size: 11px; color: var(--text2);
     text-decoration: none;
     border: 0.5px solid var(--border);
-    padding: 5px 12px;
+    padding: 4px 8px;
+    white-space: nowrap;
     border-radius: 999px;
     transition: color 0.15s, border-color 0.15s;
   }
@@ -115,12 +119,15 @@
   /* SORT */
   .sort-bar {
     display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px; scrollbar-width: none;
   }
-  .sort-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+  .sort-bar::-webkit-scrollbar { display: none; }
+  .sort-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; flex-shrink: 0; }
   .sort-btn {
     font-size: 11px; padding: 4px 10px; border-radius: 4px;
     border: 0.5px solid var(--border); background: transparent; color: var(--text2);
-    cursor: pointer; transition: all 0.15s;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
   }
   .sort-btn:hover, .sort-btn.active { border-color: var(--blue); color: var(--blue); background: rgba(59,158,221,0.1); }
   .count-badge { margin-left: auto; font-size: 11px; color: var(--text3); }
@@ -548,8 +555,8 @@
 
 <div class="hero">
   <p class="hero-eye">WANGAN MIDNIGHT MAXIMUM TUNE 6RR+</p>
-  <h1 class="hero-title"><span>全車種評価</span>データベース by れおじん</h1>
-  <p class="hero-desc">湾岸プレイヤーの投票で作られるリアルタイム車種評価サイト<br>ここで見ればきっと何かの役に立つ！<br>ご協力の方よろしくお願い致します！</p>
+  <h1 class="hero-title"><span>全車種評価</span>データベース<br>by れおじん</h1>
+  <p class="hero-desc">湾岸プレイヤーの投票で作られる<br>リアルタイム車種評価サイト<br>ここで見ればきっと何かの役に立つ！<br>ご協力の方よろしくお願い致します！</p>
   <div class="hero-pills">
     <span class="pill">みんなで作る評価リスト</span>
     <span class="pill">全114台収録</span>
