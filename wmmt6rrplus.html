@@ -85,16 +85,17 @@
   }
   .yt-link-center {
     display: flex; align-items: center; gap: 4px;
-    font-size: 10px; color: var(--text2);
+    font-size: 10px; color: #ff4444;
     text-decoration: none;
-    border: 0.5px solid var(--border);
+    border: 0.5px solid rgba(255,68,68,0.4);
+    background: rgba(255,68,68,0.08);
     padding: 4px 8px;
     white-space: nowrap;
     border-radius: 999px;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
     justify-content: center;
   }
-  .yt-link-center:hover { color: #f00; border-color: rgba(255,0,0,0.4); }
+  .yt-link-center:hover { background: rgba(255,68,68,0.18); border-color: rgba(255,68,68,0.7); }
 
   /* HERO */
   .hero {
@@ -817,7 +818,7 @@
   </div>
   <a class="yt-link-center" href="https://www.youtube.com/@LeoLeojin" target="_blank">
     <svg class="yt-icon" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.8 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
-    れおじんのYouTube
+    れおじんのYouTubeチャンネル
   </a>
   <div class="header-right">
     <button class="admin-header-btn" id="admin-header-btn" onclick="toggleAdminLogin()">管理者</button>
@@ -1386,7 +1387,7 @@ function toggleCompare(carId, btn) {
   const idx = compareList.indexOf(carId);
   if (idx > -1) {
     compareList.splice(idx, 1);
-    btn.textContent = '＋ 比較に追加';
+    btn.textContent = '＋ 比較車種に追加';
     btn.classList.remove('selected');
   } else {
     if (compareList.length >= 2) { alert('比較できるのは2台までです'); return; }
@@ -1414,7 +1415,7 @@ function updateCompareBar() {
 function clearCompare() {
   compareList = [];
   document.querySelectorAll('.compare-add-btn').forEach(b => {
-    b.textContent = '＋ 比較に追加';
+    b.textContent = '＋ 比較車種に追加';
     b.classList.remove('selected');
   });
   document.getElementById('compare-bar').classList.remove('visible');
@@ -1932,11 +1933,11 @@ function renderCard(car) {
   const voteHint = voted
     ? `<div class="car-vote">
         <p class="vote-done">✓ 投票済み — タップして詳細を見る</p>
-        <button class="compare-add-btn${isInCompare ? ' selected' : ''}" onclick="event.stopPropagation();toggleCompare('${car.id}',this)">${isInCompare ? '✓ 比較に追加済み' : '＋ 比較に追加'}</button>
+        <button class="compare-add-btn${isInCompare ? ' selected' : ''}" onclick="event.stopPropagation();toggleCompare('${car.id}',this)">${isInCompare ? '✓ 比較に追加済み' : '＋ 比較車種に追加'}</button>
       </div>`
     : `<div class="car-vote">
         <p class="vote-title">👆 タップして詳細・投票する</p>
-        <button class="compare-add-btn${isInCompare ? ' selected' : ''}" onclick="event.stopPropagation();toggleCompare('${car.id}',this)">${isInCompare ? '✓ 比較に追加済み' : '＋ 比較に追加'}</button>
+        <button class="compare-add-btn${isInCompare ? ' selected' : ''}" onclick="event.stopPropagation();toggleCompare('${car.id}',this)">${isInCompare ? '✓ 比較に追加済み' : '＋ 比較車種に追加'}</button>
       </div>`;
 
   return `<div class="car-card" id="card-${car.id}" data-maker="${car.maker}" data-id="${car.id}" onclick="openModal('${car.id}')" style="cursor:pointer">
