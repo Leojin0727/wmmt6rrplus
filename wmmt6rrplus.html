@@ -1590,9 +1590,14 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 });
 
 async function loginWithGoogle() {
+  const redirectTo = window.location.href.split('?')[0].split('#')[0];
   await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href }
+    options: {
+      redirectTo: redirectTo,
+      skipBrowserRedirect: false,
+      queryParams: { prompt: 'select_account' }
+    }
   });
 }
 
