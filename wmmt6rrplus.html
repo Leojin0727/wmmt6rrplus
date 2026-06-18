@@ -1790,6 +1790,7 @@ async function renderCommentSection(carId) {
 
   section.innerHTML = `
     <div class="modal-comment-section">
+      ${formHtml}
       <div class="comment-header">
         <span class="comment-title">💬 コメント</span>
         <div style="display:flex;align-items:center;gap:8px">
@@ -1800,7 +1801,6 @@ async function renderCommentSection(carId) {
           ` : ''}
         </div>
       </div>
-      ${formHtml}
       ${commentsHtml}
     </div>`;
 }
