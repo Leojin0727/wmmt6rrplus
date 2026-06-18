@@ -2253,7 +2253,8 @@ function getFilteredSortedCars() {
     const q = searchNormalize(currentSearchQuery);
     list = list.filter(c =>
       searchNormalize(c.name).includes(q) ||
-      searchNormalize(c.maker).includes(q)
+      searchNormalize(c.maker).includes(q) ||
+      searchNormalize(descriptions[c.id] || '').includes(q)
     );
   }
   if (currentSort === 'default') return list;
