@@ -2278,7 +2278,7 @@ function renderAll() {
   if (list.length === 0) {
     container.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--text3);">
       <div style="font-size:2rem;margin-bottom:0.5rem">🔍</div>
-      <div style="font-size:14px;">「${currentSearchQuery}」に一致する車種が見つかりませんでした</div>
+      <div style="font-size:14px;">一致する車種が見つかりませんでした。<br>より正確に入力表記をお願い致します。</div>
     </div>`;
     return;
   }
