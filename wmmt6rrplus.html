@@ -1745,30 +1745,38 @@ async function submitComment(carId) {
   } catch(e) { alert('送信に失敗しました'); btn.disabled = false; btn.textContent = 'コメントを投稿'; }
 }
 
-// いいね機能（localStorage）
+// いいね機能（localStorage・1回のみ・取り消し可・再いいね不可）
 const LIKES_KEY = 'wmmt_likes';
 function getLikesData() {
   try { return JSON.parse(localStorage.getItem(LIKES_KEY) || '{}'); } catch { return {}; }
 }
 function getLiked(commentId) {
-  return !!getLikesData()[commentId];
+  return !!getLikesData()[commentId]?.liked;
 }
 function getLikeCount(commentId) {
-  const data = getLikesData();
-  return data[commentId]?.count || 0;
+  return getLikesData()[commentId]?.count || 0;
 }
 function toggleLike(commentId, btn) {
   const data = getLikesData();
-  const liked = !!data[commentId]?.liked;
-  if (liked) {
-    data[commentId] = { liked: false, count: Math.max(0, (data[commentId]?.count || 1) - 1) };
+  const entry = data[commentId] || { liked: false, count: 0, used: false };
+  if (entry.used && !entry.liked) return; // 一度取り消したら再いいね不可
+  if (entry.liked) {
+    // 取り消し
+    entry.liked = false;
+    entry.count = Math.max(0, entry.count - 1);
+    entry.used = true; // 使用済みフラグ
     btn.classList.remove('liked');
+    btn.style.opacity = '0.4'; // 再押し不可を視覚的に表示
+    btn.style.pointerEvents = 'none';
   } else {
-    data[commentId] = { liked: true, count: (data[commentId]?.count || 0) + 1 };
+    // いいね
+    entry.liked = true;
+    entry.count = entry.count + 1;
     btn.classList.add('liked');
   }
+  data[commentId] = entry;
   localStorage.setItem(LIKES_KEY, JSON.stringify(data));
-  btn.querySelector('.like-count').textContent = data[commentId].count;
+  btn.querySelector('.like-count').textContent = entry.count;
 }
 
 async function deleteComment(commentId, carId) {
@@ -1858,7 +1866,7 @@ async function renderCommentSection(carId) {
             <p class="comment-text">${escHtml(c.content)}</p>
             <div class="comment-footer">
               ${canDelete ? `<button class="comment-delete-btn" onclick="deleteComment('${c.id}','${carId}')">🗑 削除</button>` : '<span></span>'}
-              <button class="comment-like-btn ${getLiked(c.id) ? 'liked' : ''}" onclick="toggleLike('${c.id}', this)">
+              <button class="comment-like-btn ${getLiked(c.id) ? 'liked' : ''}" onclick="toggleLike('${c.id}', this)" style="${getLikesData()[c.id]?.used && !getLikesData()[c.id]?.liked ? 'opacity:0.4;pointer-events:none' : getLiked(c.id) ? '' : ''}">
                 ♥ <span class="like-count">${getLikeCount(c.id)}</span>
               </button>
             </div>
