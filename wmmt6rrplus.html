@@ -227,8 +227,10 @@
     border-radius: 10px;
     overflow: hidden;
     transition: border-color 0.15s, transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
   }
   .car-card:hover { border-color: rgba(245,166,35,0.25); transform: translateY(-1px); }
+  .car-card:active { transform: scale(0.96); border-color: rgba(245,166,35,0.4); transition: transform 0.08s, border-color 0.08s; }
   .car-card-head {
     padding: 1rem 1rem 0.75rem;
     border-bottom: 0.5px solid var(--border);
