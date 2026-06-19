@@ -650,7 +650,19 @@
   .rank-S    { background:rgba(255,140,0,0.15);   color:#ff8c00; border-color:rgba(255,140,0,0.3); }
   .rank-SS   { background:rgba(220,50,50,0.15);   color:#e74c3c; border-color:rgba(220,50,50,0.3); }
   .rank-SSS  { background:rgba(150,50,220,0.15);  color:#9b59b6; border-color:rgba(150,50,220,0.3); }
-  .rank-SSSS { background:rgba(245,166,35,0.2);   color:#f5a623; border-color:rgba(245,166,35,0.4); }
+  .rank-SSSS { 
+    background:rgba(245,166,35,0.2); 
+    color:#f5a623; 
+    border-color:rgba(245,166,35,0.4);
+    animation: gold-sparkle 1.5s ease-in-out infinite;
+  }
+  @keyframes gold-sparkle {
+    0%   { color:#c47a00; text-shadow: 0 0 4px #c47a00; }
+    25%  { color:#f5a623; text-shadow: 0 0 8px #f5a623, 0 0 16px #f5a623, 0 0 32px #c47a00; }
+    50%  { color:#ffe066; text-shadow: 0 0 10px #ffe066, 0 0 20px #f5a623, 0 0 40px #c47a00, 0 0 60px #f5a62355; }
+    75%  { color:#f5a623; text-shadow: 0 0 8px #f5a623, 0 0 16px #f5a623, 0 0 32px #c47a00; }
+    100% { color:#c47a00; text-shadow: 0 0 4px #c47a00; }
+  }
   .rank-SSSSS { 
     border-color:rgba(255,255,255,0.3);
     background-color:rgba(255,255,255,0.05);
