@@ -1721,6 +1721,24 @@ async function loadComments(carId) {
   } catch(e) { return []; }
 }
 
+async function editComment(commentId, carId) {
+  const playerName = document.getElementById('comment-player-name')?.value.trim();
+  const playerClass = document.getElementById('comment-player-class')?.value.trim();
+  const content = document.getElementById('comment-content')?.value.trim();
+  if (!playerName || !playerClass || !content) { alert('全ての項目を入力してください'); return; }
+  try {
+    const session = (await supabaseClient.auth.getSession()).data.session;
+    const token = session?.access_token;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}`, {
+      method: 'PATCH',
+      headers: { ...SB_HEADERS, 'Authorization': `Bearer ${token}`, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ player_name: playerName, player_class: playerClass, content }),
+      mode: 'cors', credentials: 'omit'
+    });
+    if (res.ok) { renderCommentSection(carId); }
+  } catch(e) { alert('編集に失敗しました'); }
+}
+
 async function submitComment(carId) {
   const playerName = document.getElementById('comment-player-name').value.trim();
   const playerClass = document.getElementById('comment-player-class').value.trim();
@@ -1890,14 +1908,29 @@ async function renderCommentSection(carId) {
       <p class="comment-login-note">コメントにはGoogleログインが必要です</p>
       <p class="comment-login-note" style="margin-top:6px;color:rgba(240,240,240,0.5);font-size:10px;">⚠️ iPhoneの方はSafari・AndroidはChromeで開いてください</p>`;
   } else {
-    formHtml = `
-      <button class="google-logout-btn" onclick="logout()">ログアウト (${user.email})</button>
-      <div class="comment-form">
-        <input id="comment-player-name" type="text" placeholder="プレイヤー名" maxlength="20">
-        <input id="comment-player-class" type="text" placeholder="現在のクラス（例：SS6）" maxlength="20">
-        <textarea id="comment-content" placeholder="コメントを入力..." maxlength="200"></textarea>
-        <button class="comment-submit-btn" id="comment-submit-btn" onclick="submitComment('${carId}')">コメントを投稿</button>
-      </div>`;
+    // この車種に自分のコメントがあるか確認
+    const myComment = comments.find(c => c.user_id === user.id);
+    if (myComment) {
+      // 編集モード
+      formHtml = `
+        <button class="google-logout-btn" onclick="logout()">ログアウト (${user.email})</button>
+        <div class="comment-form">
+          <input id="comment-player-name" type="text" placeholder="プレイヤー名" maxlength="20" value="${escHtml(myComment.player_name)}">
+          <input id="comment-player-class" type="text" placeholder="現在のクラス（例：SS6）" maxlength="20" value="${escHtml(myComment.player_class)}">
+          <textarea id="comment-content" placeholder="コメントを入力..." maxlength="200">${escHtml(myComment.content)}</textarea>
+          <button class="comment-submit-btn" id="comment-submit-btn" onclick="editComment('${myComment.id}','${carId}')">✏️ コメントを編集</button>
+        </div>`;
+    } else {
+      // 新規投稿モード
+      formHtml = `
+        <button class="google-logout-btn" onclick="logout()">ログアウト (${user.email})</button>
+        <div class="comment-form">
+          <input id="comment-player-name" type="text" placeholder="プレイヤー名" maxlength="20">
+          <input id="comment-player-class" type="text" placeholder="現在のクラス（例：SS6）" maxlength="20">
+          <textarea id="comment-content" placeholder="コメントを入力..." maxlength="200"></textarea>
+          <button class="comment-submit-btn" id="comment-submit-btn" onclick="submitComment('${carId}')">コメントを投稿</button>
+        </div>`;
+    }
   }
 
   section.innerHTML = `
