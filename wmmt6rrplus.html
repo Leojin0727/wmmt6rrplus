@@ -2059,7 +2059,7 @@ async function renderCommentSection(carId) {
       <div class="comment-list">` +
       comments.map(c => {
         const date = new Date(c.created_at).toLocaleDateString('ja-JP');
-        const canDelete = isAdmin || (user && user.id === c.user_id);
+        const canDelete = isAdmin;
         return `<div class="comment-card">
           ${isAdmin ? `<input type="checkbox" class="comment-checkbox" data-id="${c.id}" onchange="updateSelectedBar('${carId}')">` : ''}
           <div class="comment-card-body">
