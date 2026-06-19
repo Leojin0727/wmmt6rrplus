@@ -1952,40 +1952,78 @@ async function submitComment(carId) {
   } catch(e) { alert('送信に失敗しました'); btn.disabled = false; btn.textContent = 'コメントを投稿'; }
 }
 
-// いいね機能（localStorage・1コメント1いいね・取り消し可・再いいね可）
+// いいね機能（Supabase連携・端末IDで重複防止）
 const LIKES_KEY = 'wmmt_likes';
-function getLikesData() {
-  try { return JSON.parse(localStorage.getItem(LIKES_KEY) || '{}'); } catch { return {}; }
+const DEVICE_ID_KEY = 'wmmt_device_id';
+
+function getDeviceId() {
+  let id = localStorage.getItem(DEVICE_ID_KEY);
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).substr(2, 16) + Date.now().toString(36);
+    localStorage.setItem(DEVICE_ID_KEY, id);
+  }
+  return id;
 }
+
+// likesキャッシュ { comment_id: { count, liked } }
+let likesCache = {};
+
+async function loadLikes(commentIds) {
+  if (!commentIds.length) return;
+  try {
+    const ids = commentIds.map(id => `"${id}"`).join(',');
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/likes?comment_id=in.(${ids})&select=comment_id,device_id`, {
+      headers: SB_HEADERS, mode: 'cors', credentials: 'omit'
+    });
+    const rows = await res.json();
+    const deviceId = getDeviceId();
+    // 集計
+    commentIds.forEach(id => { likesCache[id] = { count: 0, liked: false }; });
+    rows.forEach(r => {
+      if (!likesCache[r.comment_id]) likesCache[r.comment_id] = { count: 0, liked: false };
+      likesCache[r.comment_id].count++;
+      if (r.device_id === deviceId) likesCache[r.comment_id].liked = true;
+    });
+  } catch(e) { console.warn('loadLikes error:', e); }
+}
+
 function getLiked(commentId) {
-  return !!getLikesData()[commentId];
+  return !!(likesCache[commentId]?.liked);
 }
+
 function getLikeCount(commentId) {
-  return getLikesData()[commentId]?.count || 0;
+  return likesCache[commentId]?.count || 0;
 }
-function toggleLike(commentId, btn) {
-  const data = getLikesData();
-  const entry = { liked: false, count: 0, ...(data[commentId] || {}) };
+
+async function toggleLike(commentId, btn) {
+  const deviceId = getDeviceId();
+  const entry = likesCache[commentId] || { count: 0, liked: false };
   if (entry.liked) {
     // 取り消し
-    entry.liked = false;
-    entry.count = Math.max(0, entry.count - 1);
-    btn.classList.remove('liked');
-    btn.style.color = 'var(--text3)';
-    btn.style.background = 'none';
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/likes?comment_id=eq.${commentId}&device_id=eq.${deviceId}`, {
+        method: 'DELETE', headers: SB_HEADERS, mode: 'cors', credentials: 'omit'
+      });
+      entry.count = Math.max(0, entry.count - 1);
+      entry.liked = false;
+      btn.classList.remove('liked');
+      btn.style.color = 'var(--text3)';
+    } catch(e) {}
   } else {
-    // いいね（カウントが1以上なら増やさない）
-    if (entry.count >= 1 && !entry.liked) {
-      // 一度取り消した後は再いいねでカウントは増やさない
+    // いいね
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/likes`, {
+        method: 'POST',
+        headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ comment_id: commentId, device_id: deviceId }),
+        mode: 'cors', credentials: 'omit'
+      });
+      entry.count++;
       entry.liked = true;
-    } else {
-      entry.liked = true;
-      entry.count = entry.count + 1;
-    }
-    btn.classList.add('liked');
+      btn.classList.add('liked');
+    } catch(e) {}
   }
-  data[commentId] = entry;
-  localStorage.setItem(LIKES_KEY, JSON.stringify(data));
+  likesCache[commentId] = entry;
   btn.querySelector('.like-count').textContent = entry.count;
 }
 
@@ -2053,6 +2091,10 @@ async function renderCommentSection(carId) {
   if (!section) return;
 
   const comments = await loadComments(carId);
+  // いいねデータをコメントと同時並列取得
+  if (comments.length > 0) {
+    await loadLikes(comments.map(c => c.id));
+  }
   const session = (await supabaseClient.auth.getSession()).data.session;
   const user = session?.user || null;
 
