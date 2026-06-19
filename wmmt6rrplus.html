@@ -1669,17 +1669,17 @@ function switchRankingTab(stat, btn) {
 let currentUser = null;
 
 // ログイン状態の監視
-supabaseClient.auth.onAuthStateChange((event, session) => {
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
   currentUser = session?.user || null;
   // ログイン完了後にURLパラメータから車種IDを取得してモーダルを開く
   if (event === 'SIGNED_IN') {
+    // 画像・説明文を再読み込み
+    await Promise.all([loadImages(), loadDescriptions()]);
     const params = new URLSearchParams(window.location.search);
     const carId = params.get('open_car');
     if (carId) {
-      // URLパラメータを消す
       const newUrl = window.location.pathname;
       window.history.replaceState({}, '', newUrl);
-      // 少し待ってからモーダルを開く
       setTimeout(() => openModal(carId), 500);
     }
   }
