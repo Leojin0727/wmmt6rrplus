@@ -3042,7 +3042,17 @@ function renderCard(car) {
   });
 
   const badges = `${car.isNew ? '<span class="car-badge badge-new">NEW</span>' : ''}${driveBadge(car.drive)}`;
+  const totalAvgScore = (() => {
+    const scores = STATS.map(s => getAvg(car.id, s)).filter(v => v > 0);
+    if (scores.length === 0) return null;
+    return Math.round((scores.reduce((a,b) => a+b, 0) / scores.length) * 20);
+  })();
   const votesLabel = totalVotes > 0 ? `<div class="stat-votes">${totalVotes}票</div>` : '';
+  const scoreLabel = totalAvgScore !== null ? `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:0.5px solid var(--border)">
+      <span style="font-size:10px;color:var(--text3)">総合スコア</span>
+      <span style="font-size:16px;font-weight:700;color:var(--gold);font-family:'Orbitron',monospace">${totalAvgScore}<span style="font-size:10px;font-weight:400;color:var(--text3)">点</span></span>
+    </div>` : '';
   const isInCompare = compareList.includes(car.id);
   const voteHint = voted
     ? `<div class="car-vote">
@@ -3060,7 +3070,7 @@ function renderCard(car) {
       <p class="car-name">${car.name}</p>
       <div class="car-badges">${badges}</div>
     </div>
-    <div class="car-stats">${statsHtml}${votesLabel}</div>
+    <div class="car-stats">${statsHtml}${votesLabel}${scoreLabel}</div>
     ${voteHint}
   </div>`;
 }
